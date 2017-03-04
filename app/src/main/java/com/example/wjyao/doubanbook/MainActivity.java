@@ -13,6 +13,8 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 public class MainActivity extends AppCompatActivity {
 
     private ListView mListView;
@@ -45,6 +47,14 @@ public class MainActivity extends AppCompatActivity {
                     bookInformation.setText(book.getInformation());
                     ratingBar.setRating((float) (book.getRating() / 2));
                     ratingVal.setText(String.valueOf(book.getRating()));
+
+                    Glide
+                        .with(getContext())
+                        .load(book.getImage())
+                        .centerCrop()
+                        .placeholder(R.drawable.ic_default_cover)
+                        .crossFade()
+                        .into(bookImage);
 
                     new AsyncTask<Void, Void, Bitmap>() {
                         @Override
