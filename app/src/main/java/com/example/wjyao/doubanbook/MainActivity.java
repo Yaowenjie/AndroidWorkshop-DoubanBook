@@ -15,22 +15,36 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import org.json.JSONObject;
+
 public class MainActivity extends AppCompatActivity {
 
     private ListView mListView;
+    private final String DOUBAN_URL = "https://api.douban.com/v2/book/search?tag=IT&count=100";
+    private ArrayAdapter<Book> bookArrayAdaptor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        System.out.println("********" + DataLoader.loadData(this));
-        final BookData bookData = new BookData(DataLoader.loadData(this));
+        new AsyncTask<String, Void, JSONObject>() {
+            @Override
+            protected JSONObject doInBackground(String... strings) {
+                return DataLoader.loadData(DOUBAN_URL);
+            }
+
+            @Override
+            protected void onPostExecute(JSONObject jsonObject) {
+                super.onPostExecute(jsonObject);
+                BookData bookData = new BookData(jsonObject);
+                bookArrayAdaptor.addAll(bookData.getBooks());
+            }
+        }.execute();
 
         mListView = (ListView) findViewById(android.R.id.list);
 
-        mListView.setAdapter(
-            new ArrayAdapter<Book>(this, R.layout.list_item_book, bookData.getBooks()) {
+        bookArrayAdaptor =  new ArrayAdapter<Book>(this, R.layout.list_item_book) {
                 @Override
                 public View getView(int position, View convertView, ViewGroup parent) {
                     View view = LayoutInflater.from(getContext()).inflate(R.layout.list_item_book, parent, false);
@@ -71,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
 
                     return view;
                 }
-        });
+        };
+
+        mListView.setAdapter(bookArrayAdaptor);
     }
 }
