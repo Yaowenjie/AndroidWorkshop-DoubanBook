@@ -1,5 +1,7 @@
 package com.example.wjyao.doubanbook;
 
+import android.text.TextUtils;
+
 /**
  * Created by wjyao on 3/4/17.
  */
@@ -24,5 +26,33 @@ public class Book {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public String getPublishDate() {
+        return publishDate;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public String getInformation() {
+        return TextUtils.join(" / ", new String[]{getAuthor(), getPublisher(), getPublishDate()});
     }
 }
