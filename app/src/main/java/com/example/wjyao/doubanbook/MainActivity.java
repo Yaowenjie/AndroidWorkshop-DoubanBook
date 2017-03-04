@@ -20,7 +20,7 @@ import org.json.JSONObject;
 public class MainActivity extends AppCompatActivity {
 
     private ListView mListView;
-    private final String DOUBAN_URL = "https://api.douban.com/v2/book/search?tag=IT&count=100";
+    private final String DOUBAN_URL = "https://api.douban.com/v2/book/search?tag=English&count=100";
     private ArrayAdapter<Book> bookArrayAdaptor;
 
     @Override
@@ -28,19 +28,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new AsyncTask<String, Void, JSONObject>() {
-            @Override
-            protected JSONObject doInBackground(String... strings) {
-                return DataLoader.loadData(DOUBAN_URL);
-            }
-
+        new LoadDataAsyncTask() {
             @Override
             protected void onPostExecute(JSONObject jsonObject) {
                 super.onPostExecute(jsonObject);
                 BookData bookData = new BookData(jsonObject);
                 bookArrayAdaptor.addAll(bookData.getBooks());
             }
-        }.execute();
+        }.execute(DOUBAN_URL);
 
         mListView = (ListView) findViewById(android.R.id.list);
 
@@ -89,4 +84,12 @@ public class MainActivity extends AppCompatActivity {
 
         mListView.setAdapter(bookArrayAdaptor);
     }
+
+    public static class LoadDataAsyncTask extends AsyncTask<String, Void, JSONObject> {
+        @Override
+        protected JSONObject doInBackground(String... strings) {
+            return DataLoader.loadData(strings[0]);
+        }
+    }
+
 }
